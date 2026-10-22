@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Conversion & Dimensional Analysis Tutor</title>
+    <style>
+        /* --- CSS Variables & Modern Styling --- */
+        :root {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success-bg: #dcfce7;
+            --success-border: #86efac;
+            --success-text: #166534;
+            --error-bg: #fee2e2;
+            --error-border: #fca5a5;
+            --error-text: #991b1b;
+            --warning-bg: #fef3c7;
+            --warning-border: #fcd34d;
+            --warning-text: #92400e;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px 12px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 980px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px 24px;
+            box-shadow: var(--shadow);
+            border-left: 6px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- Reference Chart Modal / Card --- */
+        .reference-card {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: var(--border-radius);
+            padding: 18px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .reference-card.active {
+            display: block;
+        }
+
+        .ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .ref-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .ref-section h4 {
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            border-bottom: 2px solid #eff6ff;
+            padding-bottom: 4px;
+        }
+
+        .ref-list {
+            list-style: none;
+            font-size: 0.88rem;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        /* --- Fraction & Input Formatting --- */
+        .fraction-input-container {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 12px 16px;
+            border-radius: 10px;
+            min-width: 200px;
+        }
+
+        .fraction-line {
+            width: 100%;
+            height: 2px;
+            background-color: #475569;
+            margin: 6px 0;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
+
+        input[type="number"], select {
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .unit-select {
+            font-weight: 500;
+            max-width: 170px;
+        }
+
+        .problem-setup-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+
+        /* --- Tutor Guidance --- */
+        .tutor-box {
+            background: #eff6ff;
+            border-left: 5px solid var(--primary);
+            padding: 16px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 16px;
+        }
+
+        .tutor-header {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tutor-body {
+            font-size: 0.98rem;
+            line-height: 1.5;
+            color: #1e293b;
+        }
+
+        /* --- Hint System Banner --- */
+        .hint-box {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            color: var(--warning-text);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.92rem;
+            display: none;
+        }
+
+        .hint-box.active {
+            display: block;
+        }
+
+        /* --- Feedback Banner --- */
+        .feedback-banner {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .feedback-banner.correct {
+            display: block;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-text);
+        }
+
+        .feedback-banner.incorrect {
+            display: block;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-text);
+        }
+
+        /* --- Dimensional Analysis Bridge Track --- */
+        .bridge-track {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 24px 12px 18px 12px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--border-radius);
+            min-height: 180px;
+            margin-bottom: 20px;
+        }
+
+        .bridge-card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            gap: 4px;
+        }
+
+        .check-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .check-badge.valid {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .check-badge.invalid {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .check-badge.start {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+
+        .bridge-card {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            min-width: 110px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            transition: all 0.2s ease;
+        }
+
+        .bridge-card.start-card {
+            background: #f0f9ff;
+            border: 2px solid #93c5fd;
+        }
+
+        .bridge-card.has-equiv-error {
+            border: 2px solid #ef4444;
+            background-color: #fff5f5;
+        }
+
+        .unit-tag {
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .unit-canceled {
+            text-decoration: line-through;
+            color: #94a3b8;
+            background: #e2e8f0;
+            opacity: 0.65;
+        }
+
+        .unit-target {
+            color: #15803d;
+            font-weight: 700;
+            background: #dcfce7;
+        }
+
+        .multiply-sign {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-top: 28px;
+        }
+
+        /* --- Buttons --- */
+        .builder-controls {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .btn-warning:hover {
+            background: #fde68a;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: #eff6ff;
+        }
+
+        /* --- 3-Part Answer Section --- */
+        .answer-card {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .answer-parts-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .answer-part-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .part-label {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #334155;
+            min-width: 220px;
+        }
+
+        .status-icon {
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-width: 24px;
+        }
+
+        .input-correct {
+            border: 2px solid #16a34a !important;
+            background-color: #f0fdf4 !important;
+        }
+
+        .input-incorrect {
+            border: 2px solid #dc2626 !important;
+            background-color: #fef2f2 !important;
+        }
+
+        .highlight-unit {
+            font-weight: bold;
+            color: var(--primary);
+            background: #dbeafe;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 720px) {
+            .problem-setup-flex {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .fraction-input-container {
+                width: 100%;
+            }
+            .part-label {
+                min-width: 100%;
+            }
+            .answer-part-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>🎓 Unit Conversion Socratic Tutor</h1>
+            <p>Master dimensional analysis step-by-step with real ratio verification and guided problem solving.</p>
+        </div>
+        <div>
+            <button class="btn btn-outline" onclick="toggleReferenceChart()">📖 Conversion Reference Chart</button>
+        </div>
+    </header>
+
+    <!-- REFERENCE CONVERSION CHART MODAL / PANEL -->
+    <div class="reference-card" id="reference-card">
+        <div class="card-title" style="justify-content: space-between;">
+            <span>📖 Common Conversion Ratios Reference Sheet</span>
+            <button class="btn btn-secondary" onclick="toggleReferenceChart()" style="padding: 4px 10px; font-size: 0.8rem;">Close ✖</button>
+        </div>
+        <div class="ref-grid">
+            <div class="ref-section">
+                <h4>📏 Length / Distance</h4>
+                <ul class="ref-list">
+                    <li>1 mile (mi) = 1,760 yards (yd)</li>
+                    <li>1 mile (mi) = 5,280 feet (ft)</li>
+                    <li>1 yard (yd) = 3 feet (ft)</li>
+                    <li>1 foot (ft) = 12 inches (in)</li>
+                    <li>1 kilometer (km) = 1,000 meters (m)</li>
+                    <li>1 meter (m) = 100 centimeters (cm)</li>
+                    <li>1 centimeter (cm) = 10 millimeters (mm)</li>
+                </ul>
+            </div>
+            <div class="ref-section">
+                <h4>⏱️ Time</h4>
+                <ul class="ref-list">
+                    <li>1 minute (min) = 60 seconds (s)</li>
+                    <li>1 hour (hr) = 60 minutes (min)</li>
+                    <li>1 day (day) = 24 hours (hr)</li>
+                    <li>1 hour (hr) = 3,600 seconds (s)</li>
+                </ul>
+            </div>
+            <div class="ref-section">
+                <h4>⚖️ Mass / Weight</h4>
+                <ul class="ref-list">
+                    <li>1 kilogram (kg) = 1,000 grams (g)</li>
+                    <li>1 pound (lb) = 16 ounces (oz)</li>
+                    <li>1 kilogram (kg) ≈ 2.20462 pounds (lb)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 1: CUSTOM PROBLEM ENTRY -->
+    <div class="card">
+        <div class="card-title">
+            <span>✏️ Step 1: Input Custom Conversion Problem</span>
+        </div>
+        
+        <div class="problem-setup-flex">
+            <!-- Starting Ratio -->
+            <div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 6px;">STARTING CONVERSION RATE:</div>
+                <div class="fraction-input-container">
+                    <div class="input-row">
+                        <input type="number" id="start-num-val" value="500" style="width: 85px;" step="any">
+                        <select id="start-num-unit" class="unit-select"></select>
+                    </div>
+                    <div class="fraction-line"></div>
+                    <div class="input-row">
+                        <input type="number" id="start-den-val" value="6" style="width: 85px;" step="any">
+                        <select id="start-den-unit" class="unit-select"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-weight: 700; color: #64748b; font-size: 1.2rem; align-self: center;">➔ CONVERT TO ➔</div>
+
+            <!-- Target Ratio -->
+            <div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 6px;">TARGET GOAL UNITS:</div>
+                <div class="fraction-input-container" style="background: #f0fdf4; border-color: #86efac;">
+                    <div class="input-row">
+                        <span style="font-size: 0.85rem; color: #166534; font-weight: 600;">Top:</span>
+                        <select id="target-num-unit" class="unit-select"></select>
+                    </div>
+                    <div class="fraction-line"></div>
+                    <div class="input-row">
+                        <span style="font-size: 0.85rem; color: #166534; font-weight: 600;">Bottom:</span>
+                        <select id="target-den-unit" class="unit-select"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="align-self: center; margin-top: 18px;">
+                <button class="btn btn-primary" id="btn-start-problem" onclick="initializeProblem()">Start Learning</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: WORKSPACE & TUTOR (ACTIVE PROBLEM) -->
+    <div class="card" id="workspace-card" style="display: none;">
+        <div class="card-title">
+            <span>🌉 Step 2: Build Conversion Bridge & Verify Steps</span>
+        </div>
+
+        <!-- Socratic Tutor Dialogue -->
+        <div class="tutor-box">
+            <div class="tutor-header">
+                <span>🤖 Tutor Guidance:</span>
+            </div>
+            <div class="tutor-body" id="tutor-text">
+                Loading problem setup...
+            </div>
+        </div>
+
+        <!-- Progressive Hint System Container -->
+        <div id="hint-banner" class="hint-box"></div>
+
+        <!-- Feedback Messages -->
+        <div id="feedback-banner" class="feedback-banner"></div>
+
+        <!-- Visual Bridge Display Track with Step Checkmarks & Ratio Badges -->
+        <div class="bridge-track" id="bridge-track"></div>
+
+        <!-- Interactive Conversion Factor Builder -->
+        <div class="builder-controls" id="builder-controls">
+            <div style="font-weight: 600; font-size: 0.9rem; color: #475569; margin-bottom: 10px;">
+                Attach Next Conversion Factor Fraction (Value + Unit Ratio):
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <span class="multiply-sign" style="margin-top:0;">×</span>
+                <div class="fraction-input-container" style="min-width: auto; padding: 8px;">
+                    <div class="input-row">
+                        <input type="number" id="factor-num-val" value="1" style="width: 75px;" step="any">
+                        <select id="factor-num-unit" class="unit-select"></select>
+                    </div>
+                    <div class="fraction-line"></div>
+                    <div class="input-row">
+                        <input type="number" id="factor-den-val" value="1" style="width: 75px;" step="any">
+                        <select id="factor-den-unit" class="unit-select"></select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="addFactorStep()">Attach Factor</button>
+                <button class="btn btn-secondary" id="btn-undo" onclick="undoLastStep()" style="display: none;">↩️ Undo Factor</button>
+                <button class="btn btn-warning" id="btn-hint" onclick="triggerHint()">💡 Get Hint</button>
+            </div>
+        </div>
+
+        <!-- SECTION 3: 3-PART STUDENT ANSWER WORKBENCH -->
+        <div class="answer-card" id="answer-card">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #1e293b;">
+                🎯 Step 3: Solve the 3-Part Final Calculation
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+                Multiply top values and bottom values separately, then divide to calculate your final conversion rate.
+            </p>
+
+            <div class="answer-parts-grid">
+                <!-- Part 1: Numerator Product -->
+                <div class="answer-part-row">
+                    <span class="part-label">Part 1: Combined Top Numerators (×):</span>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-grow: 1;">
+                        <input type="number" id="ans-part-1" placeholder="Top product..." style="width: 140px;" step="any">
+                        <span id="part-1-unit" class="highlight-unit" style="font-size: 0.85rem;">units</span>
+                        <span id="status-part-1" class="status-icon"></span>
+                    </div>
+                </div>
+
+                <!-- Part 2: Denominator Product -->
+                <div class="answer-part-row">
+                    <span class="part-label">Part 2: Combined Bottom Denominators (×):</span>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-grow: 1;">
+                        <input type="number" id="ans-part-2" placeholder="Bottom product..." style="width: 140px;" step="any">
+                        <span id="part-2-unit" class="highlight-unit" style="font-size: 0.85rem;">units</span>
+                        <span id="status-part-2" class="status-icon"></span>
+                    </div>
+                </div>
+
+                <!-- Part 3: Final Quotient -->
+                <div class="answer-part-row" style="background: #f0fdf4; border-color: #bbf7d0;">
+                    <span class="part-label" style="color: #166534;">Part 3: Final Quotient (Part 1 ÷ Part 2):</span>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-grow: 1;">
+                        <input type="number" id="ans-part-3" placeholder="Final result..." style="width: 140px; font-weight: bold;" step="any">
+                        <span id="part-3-unit" class="highlight-unit" style="font-size: 0.85rem;">units / units</span>
+                        <span id="status-part-3" class="status-icon"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-success" id="btn-check-answer" onclick="checkAllAnswers()">Check All Answers 🎉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* --- UNITS DATABASE WITH FULL NAMES & CATEGORIES --- */
+    const UNIT_DATABASE = [
+        // Time
+        { abbr: 's', name: 'Seconds (s)', category: 'Time', baseFactor: 1 },
+        { abbr: 'min', name: 'Minutes (min)', category: 'Time', baseFactor: 60 },
+        { abbr: 'hr', name: 'Hours (hr)', category: 'Time', baseFactor: 3600 },
+        { abbr: 'day', name: 'Days (day)', category: 'Time', baseFactor: 86400 },
+        
+        // Distance / Length (Base: Meter)
+        { abbr: 'mm', name: 'Millimeters (mm)', category: 'Length/Distance', baseFactor: 0.001 },
+        { abbr: 'cm', name: 'Centimeters (cm)', category: 'Length/Distance', baseFactor: 0.01 },
+        { abbr: 'in', name: 'Inches (in)', category: 'Length/Distance', baseFactor: 0.0254 },
+        { abbr: 'ft', name: 'Feet (ft)', category: 'Length/Distance', baseFactor: 0.3048 },
+        { abbr: 'yd', name: 'Yards (yd)', category: 'Length/Distance', baseFactor: 0.9144 },
+        { abbr: 'm', name: 'Meters (m)', category: 'Length/Distance', baseFactor: 1 },
+        { abbr: 'km', name: 'Kilometers (km)', category: 'Length/Distance', baseFactor: 1000 },
+        { abbr: 'mi', name: 'Miles (mi)', category: 'Length/Distance', baseFactor: 1609.344 },
+
+        // Mass / Weight (Base: Gram)
+        { abbr: 'g', name: 'Grams (g)', category: 'Mass/Weight', baseFactor: 1 },
+        { abbr: 'oz', name: 'Ounces (oz)', category: 'Mass/Weight', baseFactor: 28.3495 },
+        { abbr: 'lb', name: 'Pounds (lb)', category: 'Mass/Weight', baseFactor: 453.592 },
+        { abbr: 'kg', name: 'Kilograms (kg)', category: 'Mass/Weight', baseFactor: 1000 }
+    ];
+
+    /* Map unit abbreviation to unit object */
+    const UNIT_MAP = {};
+    UNIT_DATABASE.forEach(u => { UNIT_MAP[u.abbr] = u; });
+
+    /* --- APPLICATION STATE --- */
+    let problemState = {
+        startNumVal: 500,
+        startNumUnit: 'yd',
+        startDenVal: 6,
+        startDenUnit: 'min',
+        targetNumUnit: 's',
+        targetDenUnit: 'mi',
+        factors: [], // Array of { numVal, numUnit, denVal, denUnit }
+        hintLevel: 0
+    };
+
+    /* --- INITIALIZATION --- */
+    window.onload = function() {
+        populateDropdowns();
+        
+        // Set Defaults
+        document.getElementById('start-num-unit').value = 'yd';
+        document.getElementById('start-den-unit').value = 'min';
+        document.getElementById('target-num-unit').value = 's';
+        document.getElementById('target-den-unit').value = 'mi';
+        document.getElementById('factor-num-unit').value = 's';
+        document.getElementById('factor-den-unit').value = 'min';
+
+        // Add Enter key listener
+        ['ans-part-1', 'ans-part-2', 'ans-part-3'].forEach(id => {
+            const inputEl = document.getElementById(id);
+            if (inputEl) {
+                inputEl.addEventListener('keyup', function(event) {
+                    if (event.key === 'Enter') {
+                        checkAllAnswers();
+                    }
+                });
+            }
+        });
+    };
+
+    function toggleReferenceChart() {
+        const refCard = document.getElementById('reference-card');
+        refCard.classList.toggle('active');
+    }
+
+    function populateDropdowns() {
+        const selectIds = [
+            'start-num-unit', 'start-den-unit',
+            'target-num-unit', 'target-den-unit',
+            'factor-num-unit', 'factor-den-unit'
+        ];
+
+        const categories = {};
+        UNIT_DATABASE.forEach(u => {
+            if (!categories[u.category]) categories[u.category] = [];
+            categories[u.category].push(u);
+        });
+
+        let htmlOptions = '';
+        for (const cat in categories) {
+            htmlOptions += `<optgroup label="--- ${cat} ---">`;
+            categories[cat].forEach(u => {
+                htmlOptions += `<option value="${u.abbr}">${u.name}</option>`;
+            });
+            htmlOptions += `</optgroup>`;
+        }
+
+        selectIds.forEach(id => {
+            const selectEl = document.getElementById(id);
+            if (selectEl) selectEl.innerHTML = htmlOptions;
+        });
+    }
+
+    /* --- INITIALIZE PROBLEM --- */
+    function initializeProblem() {
+        const sNumVal = parseFloat(document.getElementById('start-num-val').value);
+        const sDenVal = parseFloat(document.getElementById('start-den-val').value);
+
+        if (isNaN(sNumVal) || isNaN(sDenVal) || sNumVal <= 0 || sDenVal <= 0) {
+            alert('Please enter valid positive values for starting conversion numbers!');
+            return;
+        }
+
+        problemState.startNumVal = sNumVal;
+        problemState.startNumUnit = document.getElementById('start-num-unit').value;
+        problemState.startDenVal = sDenVal;
+        problemState.startDenUnit = document.getElementById('start-den-unit').value;
+        problemState.targetNumUnit = document.getElementById('target-num-unit').value;
+        problemState.targetDenUnit = document.getElementById('target-den-unit').value;
+        
+        problemState.factors = [];
+        problemState.hintLevel = 0;
+
+        resetAnswerFields();
+        hideFeedback();
+        hideHint();
+
+        document.getElementById('workspace-card').style.display = 'block';
+
+        updateBridgeTrack();
+        updateTutorAndUI();
+    }
+
+    /* --- CONVERSION EQUIVALENCE VALIDATION ENGINE --- */
+    function validateFactorEquivalence(factor) {
+        const uNum = UNIT_MAP[factor.numUnit];
+        const uDen = UNIT_MAP[factor.denUnit];
+
+        if (!uNum || !uDen) {
+            return { isValid: false, expectedMessage: 'Unknown unit type' };
+        }
+
+        // Must be within the same category (Length, Time, Mass)
+        if (uNum.category !== uDen.category) {
+            return { 
+                isValid: false, 
+                expectedMessage: `Cannot directly convert ${uNum.category} (${factor.numUnit}) with ${uDen.category} (${factor.denUnit})` 
+            };
+        }
+
+        // Calculate expected physical value ratio
+        // (numVal * baseFactor_num) should equal (denVal * baseFactor_den)
+        const numPhysicalValue = factor.numVal * uNum.baseFactor;
+        const denPhysicalValue = factor.denVal * uDen.baseFactor;
+
+        // Tolerance check for floating point (1% tolerance for minor rounding like kg/lbs)
+        const ratioDiff = Math.abs(numPhysicalValue - denPhysicalValue) / Math.max(numPhysicalValue, denPhysicalValue);
+        const isValid = ratioDiff <= 0.012; // ~1.2% tolerance
+
+        let expectedMessage = "";
+        if (!isValid) {
+            // Compute true simplified ratio to present in feedback
+            // e.g. 1 mi = 1760 yd
+            if (uNum.baseFactor > uDen.baseFactor) {
+                const ratio = (uNum.baseFactor / uDen.baseFactor).toLocaleString('en-US', { maximumFractionDigits: 4 });
+                expectedMessage = `1 ${factor.numUnit} = ${ratio} ${factor.denUnit}`;
+            } else {
+                const ratio = (uDen.baseFactor / uNum.baseFactor).toLocaleString('en-US', { maximumFractionDigits: 4 });
+                expectedMessage = `1 ${factor.denUnit} = ${ratio} ${factor.numUnit}`;
+            }
+        }
+
+        return { isValid, expectedMessage };
+    }
+
+    /* --- CANCELLATION ENGINE & STEP VALIDATION --- */
+    function computeCancellationState() {
+        let numerators = [{ unit: problemState.startNumUnit, factorIdx: -1 }];
+        let denominators = [{ unit: problemState.startDenUnit, factorIdx: -1 }];
+
+        problemState.factors.forEach((f, idx) => {
+            numerators.push({ unit: f.numUnit, factorIdx: idx });
+            denominators.push({ unit: f.denUnit, factorIdx: idx });
+        });
+
+        let numCanceled = new Array(numerators.length).fill(false);
+        let denCanceled = new Array(denominators.length).fill(false);
+
+        // Perform 1-to-1 unit cancellations
+        for (let i = 0; i < numerators.length; i++) {
+            for (let j = 0; j < denominators.length; j++) {
+                if (!numCanceled[i] && !denCanceled[j] && numerators[i].unit === denominators[j].unit) {
+                    numCanceled[i] = true;
+                    denCanceled[j] = true;
+                    break;
+                }
+            }
+        }
+
+        // Check unit cancellation for each factor
+        let factorStepValid = problemState.factors.map((f, idx) => {
+            let isNumUsedToCancel = numCanceled[idx + 1];
+            let isDenUsedToCancel = denCanceled[idx + 1];
+            return isNumUsedToCancel || isDenUsedToCancel;
+        });
+
+        // Check equivalence accuracy for each factor
+        let factorEquivValidation = problemState.factors.map(f => validateFactorEquivalence(f));
+
+        let activeNums = numerators.filter((_, idx) => !numCanceled[idx]).map(n => n.unit);
+        let activeDens = denominators.filter((_, idx) => !denCanceled[idx]).map(d => d.unit);
+
+        return {
+            numCanceled,
+            denCanceled,
+            factorStepValid,
+            factorEquivValidation,
+            activeNums,
+            activeDens
+        };
+    }
+
+    /* --- RENDER BRIDGE TRACK WITH DUAL CHECKMARKS --- */
+    function updateBridgeTrack() {
+        const track = document.getElementById('bridge-track');
+        track.innerHTML = '';
+
+        const cancelState = computeCancellationState();
+
+        // 1. Render Starting Ratio Card
+        const startWrapper = document.createElement('div');
+        startWrapper.className = 'bridge-card-wrapper';
+        
+        const isStartNumCanceled = cancelState.numCanceled[0];
+        const isStartDenCanceled = cancelState.denCanceled[0];
+        const isStartNumTarget = problemState.startNumUnit === problemState.targetNumUnit;
+        const isStartDenTarget = problemState.startDenUnit === problemState.targetDenUnit;
+
+        startWrapper.innerHTML = `
+            <div class="check-badge start">Start Ratio</div>
+            <div class="bridge-card start-card">
+                <div style="font-weight:700;">
+                    ${problemState.startNumVal} 
+                    <span class="unit-tag ${isStartNumCanceled ? 'unit-canceled' : ''} ${isStartNumTarget && !isStartNumCanceled ? 'unit-target' : ''}">
+                        ${problemState.startNumUnit}
+                    </span>
+                </div>
+                <div class="fraction-line"></div>
+                <div style="font-weight:700;">
+                    ${problemState.startDenVal} 
+                    <span class="unit-tag ${isStartDenCanceled ? 'unit-canceled' : ''} ${isStartDenTarget && !isStartDenCanceled ? 'unit-target' : ''}">
+                        ${problemState.startDenUnit}
+                    </span>
+                </div>
+            </div>
+        `;
+        track.appendChild(startWrapper);
+
+        // 2. Render Factor Steps with Dual Badges (Cancel + Ratio Equivalence)
+        problemState.factors.forEach((f, idx) => {
+            const mult = document.createElement('span');
+            mult.className = 'multiply-sign';
+            mult.textContent = '×';
+            track.appendChild(mult);
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bridge-card-wrapper';
+
+            // Check 1: Unit Cancellation Alignment
+            const isCancelCorrect = cancelState.factorStepValid[idx];
+            const cancelBadgeClass = isCancelCorrect ? 'valid' : 'invalid';
+            const cancelBadgeText = isCancelCorrect ? '✓ Units Cancel' : '⚠️ No Cancellation';
+
+            // Check 2: Physical Ratio Equivalence
+            const equivResult = cancelState.factorEquivValidation[idx];
+            const equivBadgeClass = equivResult.isValid ? 'valid' : 'invalid';
+            const equivBadgeText = equivResult.isValid 
+                ? '✓ Accurate Ratio' 
+                : `⚠️ Equivalence Error: ${equivResult.expectedMessage}`;
+
+            const isNumCanceled = cancelState.numCanceled[idx + 1];
+            const isDenCanceled = cancelState.denCanceled[idx + 1];
+            const isNumTarget = f.numUnit === problemState.targetNumUnit;
+            const isDenTarget = f.denUnit === problemState.targetDenUnit;
+
+            wrapper.innerHTML = `
+                <div class="check-badge ${cancelBadgeClass}">${cancelBadgeText}</div>
+                <div class="check-badge ${equivBadgeClass}">${equivBadgeText}</div>
+                <div class="bridge-card ${!equivResult.isValid ? 'has-equiv-error' : ''}">
+                    <div style="font-weight:700;">
+                        ${f.numVal} 
+                        <span class="unit-tag ${isNumCanceled ? 'unit-canceled' : ''} ${isNumTarget && !isNumCanceled ? 'unit-target' : ''}">
+                            ${f.numUnit}
+                        </span>
+                    </div>
+                    <div class="fraction-line"></div>
+                    <div style="font-weight:700;">
+                        ${f.denVal} 
+                        <span class="unit-tag ${isDenCanceled ? 'unit-canceled' : ''} ${isDenTarget && !isDenCanceled ? 'unit-target' : ''}">
+                            ${f.denUnit}
+                        </span>
+                    </div>
+                </div>
+            `;
+            track.appendChild(wrapper);
+        });
+
+        document.getElementById('btn-undo').style.display = problemState.factors.length > 0 ? 'inline-flex' : 'none';
+        
+        // Update 3-part answer unit labels
+        document.getElementById('part-1-unit').textContent = problemState.targetNumUnit;
+        document.getElementById('part-2-unit').textContent = problemState.targetDenUnit;
+        document.getElementById('part-3-unit').textContent = `${problemState.targetNumUnit} / ${problemState.targetDenUnit}`;
+    }
+
+    /* --- FACTOR ATTACHMENT & CONTROL --- */
+    function addFactorStep() {
+        hideFeedback();
+        hideHint();
+        resetAnswerFields();
+
+        const numVal = parseFloat(document.getElementById('factor-num-val').value);
+        const numUnit = document.getElementById('factor-num-unit').value;
+        const denVal = parseFloat(document.getElementById('factor-den-val').value);
+        const denUnit = document.getElementById('factor-den-unit').value;
+
+        if (isNaN(numVal) || isNaN(denVal) || numVal <= 0 || denVal <= 0) {
+            showFeedback('⚠️ Please enter valid positive numbers for conversion factor values!', 'incorrect');
+            return;
+        }
+
+        if (numUnit === denUnit) {
+            showFeedback('⚠️ Top and bottom units in a conversion factor cannot be identical!', 'incorrect');
+            return;
+        }
+
+        problemState.factors.push({ numVal, numUnit, denVal, denUnit });
+        problemState.hintLevel = 0;
+
+        updateBridgeTrack();
+        updateTutorAndUI();
+    }
+
+    function undoLastStep() {
+        if (problemState.factors.length > 0) {
+            problemState.factors.pop();
+            problemState.hintLevel = 0;
+            resetAnswerFields();
+            hideFeedback();
+            hideHint();
+            updateBridgeTrack();
+            updateTutorAndUI();
+        }
+    }
+
+    /* --- SOCRATIC TUTOR ENGINE --- */
+    function updateTutorAndUI() {
+        const cancelState = computeCancellationState();
+        const activeNums = cancelState.activeNums;
+        const activeDens = cancelState.activeDens;
+
+        const targetNum = problemState.targetNumUnit;
+        const targetDen = problemState.targetDenUnit;
+
+        const isNumSolved = (activeNums.length === 1 && activeNums[0] === targetNum);
+        const isDenSolved = (activeDens.length === 1 && activeDens[0] === targetDen);
+
+        // Check if any attached factors have equivalence errors
+        const invalidEquivIndex = cancelState.factorEquivValidation.findIndex(res => !res.isValid);
+
+        const tutorBox = document.getElementById('tutor-text');
+
+        if (invalidEquivIndex !== -1) {
+            const errFactor = problemState.factors[invalidEquivIndex];
+            const errDetail = cancelState.factorEquivValidation[invalidEquivIndex].expectedMessage;
+            tutorBox.innerHTML = `
+                ⚠️ <strong>Equivalence Error in Factor ${invalidEquivIndex + 1}:</strong> 
+                The ratio <strong>${errFactor.numVal} ${errFactor.numUnit} / ${errFactor.denVal} ${errFactor.denUnit}</strong> is physically inaccurate! 
+                <em>(Actual ratio: ${errDetail})</em>. Please correct this ratio or undo this factor.
+            `;
+        } else if (isNumSolved && isDenSolved) {
+            tutorBox.innerHTML = `
+                🎉 <strong>Perfect Setup & Ratios!</strong> Every unwanted unit cancels out leaving exactly 
+                <span class="highlight-unit">${targetNum} / ${targetDen}</span> with accurate physical ratios. 
+                Now solve <strong>Parts 1, 2, and 3</strong> below!
+            `;
+        } else {
+            let msg = `Target Goal: <strong>${targetNum} / ${targetDen}</strong>.<br>`;
+            
+            let unwantedNum = activeNums.find(u => u !== targetNum);
+            let unwantedDen = activeDens.find(u => u !== targetDen);
+
+            if (unwantedNum) {
+                msg += `👉 You have an unwanted unit <strong>"${unwantedNum}"</strong> in the <em>Top (Numerator)</em>. Add a factor with <strong>"${unwantedNum}"</strong> on the <em>Bottom (Denominator)</em> to cancel it out.`;
+            } else if (unwantedDen) {
+                msg += `👉 You have an unwanted unit <strong>"${unwantedDen}"</strong> in the <em>Bottom (Denominator)</em>. Add a factor with <strong>"${unwantedDen}"</strong> on the <em>Top (Numerator)</em> to cancel it out.`;
+            } else if (!activeNums.includes(targetNum)) {
+                msg += `👉 Introduce the target unit <strong>"${targetNum}"</strong> into the <em>Top (Numerator)</em>.`;
+            } else if (!activeDens.includes(targetDen)) {
+                msg += `👉 Introduce the target unit <strong>"${targetDen}"</strong> into the <em>Bottom (Denominator)</em>.`;
+            }
+
+            tutorBox.innerHTML = msg;
+        }
+    }
+
+    /* --- PROGRESSIVE HINT ENGINE --- */
+    function triggerHint() {
+        problemState.hintLevel++;
+        const cancelState = computeCancellationState();
+        const activeNums = cancelState.activeNums;
+        const activeDens = cancelState.activeDens;
+
+        const targetNum = problemState.targetNumUnit;
+        const targetDen = problemState.targetDenUnit;
+
+        let unwantedNum = activeNums.find(u => u !== targetNum);
+        let unwantedDen = activeDens.find(u => u !== targetDen);
+
+        let hintMsg = "";
+
+        if (problemState.hintLevel === 1) {
+            if (unwantedNum) {
+                hintMsg = `💡 <strong>Hint 1:</strong> To cancel <strong>"${unwantedNum}"</strong> from the top, place <strong>"${unwantedNum}"</strong> on the <em>bottom</em> of your next fraction.`;
+            } else if (unwantedDen) {
+                hintMsg = `💡 <strong>Hint 1:</strong> To cancel <strong>"${unwantedDen}"</strong> from the bottom, place <strong>"${unwantedDen}"</strong> on the <em>top</em> of your next fraction.`;
+            } else {
+                hintMsg = `💡 <strong>Hint 1:</strong> Compare active units (${activeNums.join(', ')} / ${activeDens.join(', ')}) with target (${targetNum} / ${targetDen}).`;
+            }
+        } else if (problemState.hintLevel === 2) {
+            hintMsg = `💡 <strong>Hint 2:</strong> Open the <strong>Reference Chart 📖</strong> at top right to find accurate conversion ratios.`;
+        } else {
+            if (unwantedNum) {
+                hintMsg = `💡 <strong>Hint 3:</strong> Put <strong>"${unwantedNum}"</strong> on bottom, its exact conversion equivalent on top, and click "Attach Factor"!`;
+            } else if (unwantedDen) {
+                hintMsg = `💡 <strong>Hint 3:</strong> Put <strong>"${unwantedDen}"</strong> on top, its exact conversion equivalent on bottom, and click "Attach Factor"!`;
+            } else {
+                hintMsg = `💡 <strong>Hint 3:</strong> All unit steps look great! Complete Parts 1, 2, and 3 below.`;
+            }
+        }
+
+        const banner = document.getElementById('hint-banner');
+        banner.innerHTML = hintMsg;
+        banner.classList.add('active');
+    }
+
+    function hideHint() {
+        const banner = document.getElementById('hint-banner');
+        banner.classList.remove('active');
+    }
+
+    /* --- 3-PART ANSWER VERIFICATION ENGINE --- */
+    function checkAllAnswers() {
+        hideFeedback();
+
+        const cancelState = computeCancellationState();
+        const invalidEquivIndex = cancelState.factorEquivValidation.findIndex(res => !res.isValid);
+
+        // 1. First check if any factor has a physical ratio equivalence error
+        if (invalidEquivIndex !== -1) {
+            const errFactor = problemState.factors[invalidEquivIndex];
+            const errDetail = cancelState.factorEquivValidation[invalidEquivIndex].expectedMessage;
+            showFeedback(`
+                ⚠️ <strong>Cannot calculate final answer with inaccurate conversion ratios!</strong><br>
+                Factor ${invalidEquivIndex + 1} (${errFactor.numVal} ${errFactor.numUnit} / ${errFactor.denVal} ${errFactor.denUnit}) is inaccurate. 
+                <em>Real ratio: ${errDetail}</em>. Fix this factor before finalizing your calculation.
+            `, 'incorrect');
+            return;
+        }
+
+        // 2. Compute Expected Target Products
+        let expectedNumProduct = problemState.startNumVal;
+        let expectedDenProduct = problemState.startDenVal;
+
+        problemState.factors.forEach(f => {
+            expectedNumProduct *= f.numVal;
+            expectedDenProduct *= f.denVal;
+        });
+
+        const expectedQuotient = expectedNumProduct / expectedDenProduct;
+
+        // 3. Read Student Inputs
+        const p1Val = parseFloat(document.getElementById('ans-part-1').value);
+        const p2Val = parseFloat(document.getElementById('ans-part-2').value);
+        const p3Val = parseFloat(document.getElementById('ans-part-3').value);
+
+        // 4. Evaluate each part independently (1% tolerance)
+        const isP1Correct = !isNaN(p1Val) && (Math.abs(p1Val - expectedNumProduct) / expectedNumProduct <= 0.01);
+        const isP2Correct = !isNaN(p2Val) && (Math.abs(p2Val - expectedDenProduct) / expectedDenProduct <= 0.01);
+        const isP3Correct = !isNaN(p3Val) && (Math.abs(p3Val - expectedQuotient) / expectedQuotient <= 0.01);
+
+        // 5. Update UI status indicators
+        updatePartStatus('ans-part-1', 'status-part-1', isP1Correct, isNaN(p1Val));
+        updatePartStatus('ans-part-2', 'status-part-2', isP2Correct, isNaN(p2Val));
+        updatePartStatus('ans-part-3', 'status-part-3', isP3Correct, isNaN(p3Val));
+
+        // 6. Unit Bridge Verification
+        const isNumTargetMatch = (cancelState.activeNums.length === 1 && cancelState.activeNums[0] === problemState.targetNumUnit);
+        const isDenTargetMatch = (cancelState.activeDens.length === 1 && cancelState.activeDens[0] === problemState.targetDenUnit);
+        const isBridgeReady = isNumTargetMatch && isDenTargetMatch;
+
+        // 7. Feedback Generation
+        if (isP1Correct && isP2Correct && isP3Correct) {
+            if (isBridgeReady) {
+                showFeedback(`
+                    🎉 <strong>PERFECT WORK! ALL 3 PARTS & CONVERSION RATIOS ARE CORRECT!</strong> 🎉<br>
+                    • Part 1 Numerator Product: <strong>${p1Val}</strong> ✓<br>
+                    • Part 2 Denominator Product: <strong>${p2Val}</strong> ✓<br>
+                    • Part 3 Final Quotient: <strong>${p3Val} ${problemState.targetNumUnit}/${problemState.targetDenUnit}</strong> ✓
+                `, 'correct');
+            } else {
+                showFeedback(`
+                    ⚠️ <strong>Math is correct for these factors, but bridge is incomplete!</strong><br>
+                    Your calculations match your current chain, but your active units still need to cancel down to 
+                    <strong>${problemState.targetNumUnit} / ${problemState.targetDenUnit}</strong>.
+                `, 'incorrect');
+            }
+        } else {
+            let errorDetails = `❌ <strong>Please review highlighted calculations:</strong><br>`;
+            if (!isP1Correct) {
+                errorDetails += `• <strong>Part 1 (Top Product):</strong> Multiply all top numerators together (${problemState.startNumVal} ${problemState.factors.map(f => '× ' + f.numVal).join(' ')}).<br>`;
+            }
+            if (!isP2Correct) {
+                errorDetails += `• <strong>Part 2 (Bottom Product):</strong> Multiply all bottom denominators together (${problemState.startDenVal} ${problemState.factors.map(f => '× ' + f.denVal).join(' ')}).<br>`;
+            }
+            if (!isP3Correct) {
+                errorDetails += `• <strong>Part 3 (Final Division):</strong> Divide Part 1 (Top Product) by Part 2 (Bottom Product).<br>`;
+            }
+            showFeedback(errorDetails, 'incorrect');
+        }
+    }
+
+    function updatePartStatus(inputId, statusId, isCorrect, isEmpty) {
+        const inputEl = document.getElementById(inputId);
+        const statusEl = document.getElementById(statusId);
+
+        if (isEmpty) {
+            inputEl.className = 'input-incorrect';
+            statusEl.textContent = '❌';
+            statusEl.style.color = '#dc2626';
+        } else if (isCorrect) {
+            inputEl.className = 'input-correct';
+            statusEl.textContent = '✓';
+            statusEl.style.color = '#16a34a';
+        } else {
+            inputEl.className = 'input-incorrect';
+            statusEl.textContent = '❌';
+            statusEl.style.color = '#dc2626';
+        }
+    }
+
+    function resetAnswerFields() {
+        ['ans-part-1', 'ans-part-2', 'ans-part-3'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = '';
+                el.className = '';
+            }
+        });
+        ['status-part-1', 'status-part-2', 'status-part-3'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '';
+        });
+    }
+
+    /* --- FEEDBACK HELPERS --- */
+    function showFeedback(msg, className) {
+        const fb = document.getElementById('feedback-banner');
+        fb.className = `feedback-banner ${className}`;
+        fb.innerHTML = msg;
+        fb.style.display = 'block';
+    }
+
+    function hideFeedback() {
+        const fb = document.getElementById('feedback-banner');
+        fb.className = 'feedback-banner';
+        fb.style.display = 'none';
+    }
+</script>
+</body>
+</html>
